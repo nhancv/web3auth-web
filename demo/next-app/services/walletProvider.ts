@@ -8,6 +8,7 @@ export interface IWalletProvider {
   signAndSendTransaction: () => Promise<void>;
   signTransaction: () => Promise<void>;
   signMessage: () => Promise<void>;
+  getPrivateKey?: () => Promise<void>;
 }
 
 export const getWalletProvider = (chain: string, provider: SafeEventEmitterProvider, uiConsole: any): IWalletProvider => {

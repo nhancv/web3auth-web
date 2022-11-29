@@ -17,6 +17,7 @@
         <button id="sign-message" class="btn">Sign Message</button>
         <button id="sign-tx" class="btn">Sign Transaction</button>
         <button id="send-tx" class="btn">Send Transaction</button>
+        <button id="get-privatekey" class="btn">Get Private Key</button>
 
         <button id="logout" class="btn">Logout</button>
 
@@ -49,7 +50,7 @@
         $("#sign-tx").hide();
 
         web3AuthInstance = new web3authSdk.Web3Auth({
-          chainConfig: { chainNamespace: "eip155" },
+          chainConfig: { chainNamespace: "eip155", chainId: "0x61", rpcTarget: "https://rpc.ankr.com/bsc_testnet_chapel" },
           uiConfig: {
             theme: "dark",
             defaultLanguage: "en",
@@ -199,6 +200,17 @@
             value: web3.utils.toWei("0.01"),
           });
           $("#code").text(JSON.stringify(txRes));
+        } catch (error) {
+          console.error(error.message);
+        }
+      });
+
+      $("#get-privatekey").click(async function (event) {
+        try {
+          const privateKey = await web3AuthInstance.provider.request({
+            method: "eth_private_key",
+          });
+          $("#code").text(privateKey);
         } catch (error) {
           console.error(error.message);
         }

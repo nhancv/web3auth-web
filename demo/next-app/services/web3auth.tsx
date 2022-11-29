@@ -1,10 +1,12 @@
-import { ADAPTER_EVENTS, SafeEventEmitterProvider } from "@web3auth/base";
+import { ADAPTER_EVENTS, SafeEventEmitterProvider, WALLET_ADAPTERS } from "@web3auth/base";
 import { Web3Auth } from "@web3auth/modal";
 import { createContext, FunctionComponent, ReactNode, useCallback, useContext, useEffect, useState } from "react";
 import { CHAIN_CONFIG, CHAIN_CONFIG_TYPE } from "../config/chainConfig";
 import { WEB3AUTH_NETWORK_TYPE } from "../config/web3AuthNetwork";
 import { getWalletProvider, IWalletProvider } from "./walletProvider";
 import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
+import { LOGIN_PROVIDER } from "@toruslabs/openlogin";
+import { TorusWalletConnectorPlugin } from "@web3auth/torus-wallet-connector-plugin";
 
 export interface IWeb3AuthContext {
   web3Auth: Web3Auth | null;
@@ -20,6 +22,7 @@ export interface IWeb3AuthContext {
   getBalance: () => Promise<any>;
   signTransaction: () => Promise<void>;
   signAndSendTransaction: () => Promise<void>;
+  getPrivateKey?: () => Promise<void>;
 }
 
 export const Web3AuthContext = createContext<IWeb3AuthContext>({
@@ -36,6 +39,7 @@ export const Web3AuthContext = createContext<IWeb3AuthContext>({
   getBalance: async () => {},
   signTransaction: async () => {},
   signAndSendTransaction: async () => {},
+  getPrivateKey: async () => {},
 });
 
 export function useWeb3Auth(): IWeb3AuthContext {
@@ -100,13 +104,71 @@ export const Web3AuthProvider: FunctionComponent<IWeb3AuthState> = ({ children, 
           chainConfig: currentChainConfig,
           // get your client id from https://dashboard.web3auth.io
           clientId,
+          uiConfig: {
+            theme: "dark",
+            loginMethodsOrder: ["facebook", "google"],
+            appLogo: "https://web3auth.io/images/w3a-L-Favicon-1.svg", // Your App Logo Here
+          },
         });
-
-        const adapter = new OpenloginAdapter({ adapterSettings: { network: web3AuthNetwork, clientId } });
+        const adapter = new OpenloginAdapter({
+          adapterSettings: {
+            network: web3AuthNetwork,
+            clientId,
+          },
+        });
         web3AuthInstance.configureAdapter(adapter);
+
         subscribeAuthEvents(web3AuthInstance);
         setWeb3Auth(web3AuthInstance);
-        await web3AuthInstance.initModal();
+        await web3AuthInstance.initModal({
+          modalConfig: {
+            [WALLET_ADAPTERS.OPENLOGIN]: {
+              label: WALLET_ADAPTERS.OPENLOGIN,
+              loginMethods: {
+                [LOGIN_PROVIDER.REDDIT]: {
+                  name: LOGIN_PROVIDER.REDDIT,
+                  showOnModal: false,
+                },
+                [LOGIN_PROVIDER.DISCORD]: {
+                  name: LOGIN_PROVIDER.DISCORD,
+                  showOnModal: false,
+                },
+                [LOGIN_PROVIDER.TWITCH]: {
+                  name: LOGIN_PROVIDER.TWITCH,
+                  showOnModal: false,
+                },
+                [LOGIN_PROVIDER.LINE]: {
+                  name: LOGIN_PROVIDER.LINE,
+                  showOnModal: false,
+                },
+                [LOGIN_PROVIDER.GITHUB]: {
+                  name: LOGIN_PROVIDER.GITHUB,
+                  showOnModal: false,
+                },
+                [LOGIN_PROVIDER.KAKAO]: {
+                  name: LOGIN_PROVIDER.KAKAO,
+                  showOnModal: false,
+                },
+                [LOGIN_PROVIDER.WEIBO]: {
+                  name: LOGIN_PROVIDER.WEIBO,
+                  showOnModal: false,
+                },
+                [LOGIN_PROVIDER.WECHAT]: {
+                  name: LOGIN_PROVIDER.WECHAT,
+                  showOnModal: false,
+                },
+                [LOGIN_PROVIDER.LINKEDIN]: {
+                  name: LOGIN_PROVIDER.LINKEDIN,
+                  showOnModal: false,
+                },
+                [LOGIN_PROVIDER.TWITTER]: {
+                  name: LOGIN_PROVIDER.TWITTER,
+                  showOnModal: false,
+                },
+              },
+            },
+          },
+        });
       } catch (error) {
         console.error(error);
       } finally {
@@ -132,7 +194,7 @@ export const Web3AuthProvider: FunctionComponent<IWeb3AuthState> = ({ children, 
       uiConsole("web3auth not initialized yet");
       return;
     }
-    await web3Auth.logout();
+    await web3Auth.logout({ cleanup: true });
     setProvider(null);
   };
 
@@ -142,7 +204,9 @@ export const Web3AuthProvider: FunctionComponent<IWeb3AuthState> = ({ children, 
       uiConsole("web3auth not initialized yet");
       return;
     }
-    const user = await web3Auth.getUserInfo();
+    let user = await web3Auth.getUserInfo();
+    if (!user.hasOwnProperty("idToken")) user = await web3Auth.authenticateUser();
+
     uiConsole(user);
   };
 
@@ -191,6 +255,15 @@ export const Web3AuthProvider: FunctionComponent<IWeb3AuthState> = ({ children, 
     await provider.signAndSendTransaction();
   };
 
+  const getPrivateKey = async () => {
+    if (!provider) {
+      console.log("provider not initialized yet");
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    if (provider.getPrivateKey) await provider.getPrivateKey();
+  };
+
   const uiConsole = (...args: unknown[]): void => {
     const el = document.querySelector("#console>p");
     if (el) {
@@ -212,6 +285,7 @@ export const Web3AuthProvider: FunctionComponent<IWeb3AuthState> = ({ children, 
     signMessage,
     signTransaction,
     signAndSendTransaction,
+    getPrivateKey,
   };
   return <Web3AuthContext.Provider value={contextProvider}>{children}</Web3AuthContext.Provider>;
 };

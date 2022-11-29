@@ -1,11 +1,20 @@
 import { CHAIN_NAMESPACES, CustomChainConfig } from "@web3auth/base";
 
 export const CHAIN_CONFIG = {
+  goerli: {
+    displayName: "Ethereum Goerli",
+    chainNamespace: CHAIN_NAMESPACES.EIP155,
+    chainId: "0x5",
+    rpcTarget: `https://ethereum-goerli-rpc.allthatnode.com`,
+    blockExplorer: "https://goerli.etherscan.io/",
+    ticker: "ETH",
+    tickerName: "Ethereum",
+  } as CustomChainConfig,
   mainnet: {
     displayName: "Ethereum Mainnet",
     chainNamespace: CHAIN_NAMESPACES.EIP155,
     chainId: "0x1",
-    rpcTarget: `https://mainnet.infura.io/v3/776218ac4734478c90191dde8cae483c`,
+    rpcTarget: `https://ethereum-mainnet-rpc.allthatnode.com`,
     blockExplorer: "https://etherscan.io/",
     ticker: "ETH",
     tickerName: "Ethereum",

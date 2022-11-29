@@ -3,7 +3,20 @@ import styles from "../styles/Home.module.css";
 import { WALLET_ADAPTERS } from "@web3auth/base";
 
 const Main = () => {
-  const { provider, login, logout, getUserInfo, getAccounts, getBalance, signMessage, signTransaction, signAndSendTransaction, web3Auth, chain } = useWeb3Auth();
+  const {
+    provider,
+    login,
+    logout,
+    getUserInfo,
+    getAccounts,
+    getBalance,
+    signMessage,
+    signTransaction,
+    signAndSendTransaction,
+    getPrivateKey,
+    web3Auth,
+    chain,
+  } = useWeb3Auth();
 
   const loggedInView = (
     <>
@@ -19,15 +32,17 @@ const Main = () => {
       <button onClick={signMessage} className={styles.card}>
         Sign Message
       </button>
-      {
-        (web3Auth?.connectedAdapterName === WALLET_ADAPTERS.OPENLOGIN || chain === "solana") &&
-        (<button onClick={signTransaction} className={styles.card}>
+      {(web3Auth?.connectedAdapterName === WALLET_ADAPTERS.OPENLOGIN || chain === "solana") && (
+        <button onClick={signTransaction} className={styles.card}>
           Sign Transaction
-      </button>)
-      }
-      
+        </button>
+      )}
+
       <button onClick={signAndSendTransaction} className={styles.card}>
         Sign and Send Transaction
+      </button>
+      <button onClick={getPrivateKey} className={styles.card}>
+        Get PrivateKey
       </button>
       <button onClick={logout} className={styles.card}>
         Log Out
@@ -47,6 +62,5 @@ const Main = () => {
 
   return <div className={styles.grid}>{provider ? loggedInView : unloggedInView}</div>;
 };
-
 
 export default Main;

@@ -9,8 +9,8 @@ import Setting from "../components/setting";
 import styles from "../styles/Home.module.css";
 
 const Home: NextPage = () => {
-  const [web3AuthNetwork, setWeb3AuthNetwork] = useState<WEB3AUTH_NETWORK_TYPE>("mainnet");
-  const [chain, setChain] = useState<CHAIN_CONFIG_TYPE>("mainnet");
+  const [web3AuthNetwork, setWeb3AuthNetwork] = useState<WEB3AUTH_NETWORK_TYPE>("testnet");
+  const [chain, setChain] = useState<CHAIN_CONFIG_TYPE>("goerli");
 
   return (
     <div className={styles.container}>
