@@ -4,6 +4,7 @@ const nextConfig = {
   experimental: {
     esmExternals: "loose",
   },
+  output: 'standalone',
 };
 
 module.exports = nextConfig;
