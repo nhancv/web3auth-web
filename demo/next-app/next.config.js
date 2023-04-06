@@ -2,7 +2,10 @@
 const nextConfig = {
   reactStrictMode: true,
   experimental: {
-    esmExternals: "loose",
+    esmExternals: true,
+    images: {
+        unoptimized: true
+    }
   },
   output: 'standalone',
 };
