@@ -99,14 +99,14 @@ export const Web3AuthProvider: FunctionComponent<IWeb3AuthState> = ({ children, 
       try {
         const currentChainConfig = CHAIN_CONFIG[chain];
         setIsLoading(true);
-        const clientId = "BKPxkCtfC9gZ5dj-eg-W6yb5Xfr3XkxHuGZl2o2Bn8gKQ7UYike9Dh6c-_LaXlUN77x0cBoPwcSx-IVm0llVsLA";
+        const clientId = "BBpGxiS2mXxRbbTz3Yy1loL1cmP7PDWphczh3iWieA6O0QVLuGKZxAOhltWtIgEHQl2BK4Kl_NsVxAb--PnueTE";
         const web3AuthInstance = new Web3Auth({
           chainConfig: currentChainConfig,
           // get your client id from https://dashboard.web3auth.io
           clientId,
           uiConfig: {
             defaultLanguage: "en",
-            theme: "light",
+            mode: "light",
             loginGridCol: 3,
             primaryButton: "socialLogin",
           },
